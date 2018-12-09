@@ -1,0 +1,217 @@
+close all;
+clear all;
+% Set working directory
+cd('\ \ \');
+% Set parameters I
+ox = 601;
+oy = 301;
+ox1 = ox*5;
+oy1 = oy*5;
+fs = 185;%Starting time
+fn = 650;%Ending time
+
+%Load grid
+fid = fopen(‘\grid.dat');
+ints = fread(fid,5,'int32',0);
+datain1 = fread(fid,2*ox1*oy1,'single', 0);
+x3d = reshape(datain1(1:ox1*oy1),[ox1, oy1]);
+y3d = reshape(datain1(ox1*oy1+1:ox1*oy1*2),[ox1, oy1]);
+clear fid ints datain1 m
+x2 = x1(:,1);
+y2 = y1(1,:);
+dx = abs( x2(2)-x2(1) );
+dy = abs( y2(2)-y2(1) );
+
+for fi = fs:5:fn
+    % Read Data
+    filename = ([.\part',sprintf('%7.7d',fi*100),'.dat']);
+    fid = fopen(filename);
+    D = textscan(fid,'%f%f','headerlines',3+3+ox*oy,'delimiter','\t');
+    fclose(fid);
+    pd = cell2mat(D);
+    datain = importdata(filename);
+    
+    u3d = reshape(datain(ox1*oy1*2+1:ox1*oy1*3),[ox1, oy1]);
+    v3d = reshape(datain(ox1*oy1*3+1:ox1*oy1*4),[ox1, oy1]);
+     
+    % Plate location
+     pdx = pd(:,1);
+     pdy = pd(:,2);
+    
+    clear datain
+    clear m u v vor psi dudx dudy dvdx dvdy p;
+    
+    
+    [p1x p1i] = min(pdx);
+    [p2y p2i] = max(pdy);
+    [p3x p3i] = max(pdx);
+    [p4y p4i] = min(pdy);
+    p1y = pdy(p1i);
+    p2x = pdx(p2i);
+    p3y = pdy(p3i);
+    p4x = pdx(p4i);
+    p1x = p1x-0.01;
+    p3x = p3x+0.01;
+    p2y = p2y+0.01;
+    p4y = p4y-0.01;
+    [p3ix p3iy] = find(x1<=p3x+0.001 & x1>=p3x-0.001);
+    
+    filename = (['\~_ftle_neg_',sprintf('%4.4d',fi),'~.dat']);
+    fid = fopen(filename);
+    ints1 = fread(fid,6,'int32',0);
+    datain2 = fread(fid,ox1*oy1,'single',0);
+     fclose(fid);
+     nftle(i,j) = reshape(datain2,[ox1, oy1]);
+     clear datain2 fid ints1 filename m
+     
+    filename = (['\~_ftle_pos_',sprintf('%4.4d',fi),'~.dat']);
+    fid = fopen(filename);
+    ints1 = fread(fid,6,'int32',0);
+    datain2 = fread(fid,ox1*oy1,'single',0);
+     fclose(fid);
+     pftle(i,j) = reshape(datain2,[ox1, oy1]);
+    clear datain2 fid ints1 filename m  
+    
+    %     Find all the intersections
+    ftle = pftle + nftle;
+    [inp(:,1),inp(:,2)] = find(ftle>=0.89*max(max(ftle)));
+    
+    inp = sortrows(inp);
+    linp = size(inp,1);
+    for i = 1:1:linp
+        testpx(i) = x1(inp(i,1),inp(i,2));
+        testpy(i) = y1(inp(i,1),inp(i,2));
+    end
+    t1 = testpx;
+    t2 = testpy;
+    sinp = size(inp1,1);
+    for i = 1:1:sinp
+        t3(i) = x1(inp1(i,1),inp1(i,2));
+        t4(i) = y1(inp1(i,1),inp1(i,2));
+    end
+        [t1xi t1yi] = find(testpx>p1x & testpx<p3x);
+    t1v = testpx(t1yi);
+    t2v = testpy(t1yi);
+    [t2xi t2yi] = find(t2v>p4y & t2v<p2y);
+    t3v = t1v(t2yi);
+    t4v = t2v(t2yi);
+    pt2(:,1) = testpx;
+    pt2(:,2) = testpy;
+    if isempty(t3v) ==0
+        pt1(:,1) = t3v;
+        pt1(:,2) = t4v;
+        [testpv testp1 testp2] = intersect(pt1,pt2,'rows');
+        pt2(testp2,:) = [];
+    end
+    t5v = pt2(:,1);
+    t6v = pt2(:,2);
+    clear linp t1xi t1yi t1v
+    clear t2v t2xi t2yi t3v t4v pt1 pt2 testpv testp1 testp2
+    
+    p1d = diff(t5v);
+    [pk1dx pk1dy] = find(p1d<0.002;
+    p2d = abs(diff(t6v));
+    [pk2dx pk2dy] = find(p2d<0.002);
+    pkj = intersect(pk1dx, pk2dx);
+    t5v(pkj) = [];
+    t6v(pkj) = [];
+        inp(pkj,:) = [];
+    clear p1d pk1dx pk1dy p2d pk2dx pk2dy pkj
+%%    
+    intm(:,2) = t5v;
+    intm(:,1) = t6v;
+    %     inp1(:,1) = inp(:,2);
+    %     inp1(:,2) = inp(:,1);
+    intm1 = sortrows(intm);
+    %     inp2 = sortrows(inp1);
+    t5v2 = intm1(:,2);
+    t6v2 = intm1(:,1);
+    p1d = diff(t5v2);
+    [pk1dx pk1dy] = find(p1d<0.01);
+    p2d = abs(diff(t6v2));
+    [pk2dx pk2dy] = find(p2d<0.01);
+    pkj = intersect(pk1dx, pk2dx);
+    clear p1d pk1dx pk1dy p2d pk2dx pk2dy pkj intm intm1
+    
+    [tx1 ty1] = find(t5v2<p3x);
+    [tx2 ty2] = find(t5v2>=p3x);
+    t5v21 = t5v2(tx1);
+    t6v21 = t6v2(tx1);
+    t5v22 = t5v2(tx2);
+    t6v22 = t6v2(tx2);
+    
+    intm(:,1) = t5v21;
+    intm(:,2) = t6v21;
+    intm1 = sortrows(intm);
+    t5v3 = intm1(:,1);
+    t6v3 = intm1(:,2);
+    p1d = diff(t5v3);
+    [pk1dx pk1dy] = find(p1d<0.02);
+    p2d = abs(diff(t6v3));
+    [pk2dx pk2dy] = find(p2d<0.02);
+    pkj = intersect(pk1dx, pk2dx);
+    intm1 = sortrows(intm);
+    t5v3 = intm1(:,1);
+    t6v3 = intm1(:,2);
+    p1d = diff(t5v3);
+    [pk1dx pk1dy] = find(p1d<0.03);%7);
+    p2d = abs(diff(t6v3));
+    [pk2dx pk2dy] = find(p2d<0.03);
+    pkj = intersect(pk1dx, pk2dx);
+    clear p1d pk1dx pk1dy p2d pk2dx pk2dy pkj intm intm1
+    p1d = diff(t5v3);
+    [pk1dx pk1dy] = find(p1d<0.08);
+    p2d = abs(diff(t6v3));
+    [pk2dx pk2dy] = find(p2d<0.08);
+    pkj = intersect(pk1dx, pk2dx);
+    clear p1d pk1dx pk1dy p2d pk2dx pk2dy pkj intm intm1 nm k1ix k1iy k2ix k2iy idx1 idx2
+    
+    intm(:,1) = t5v22;
+    intm(:,2) = t6v22;
+    intm1 = sortrows(intm);
+    t5v32 = intm1(:,1);
+    t6v32 = intm1(:,2);
+    p1d = diff(t5v32);
+    [pk1dx pk1dy] = find(p1d<0.1);
+    p2d = abs(diff(t6v32));
+    [pk2dx pk2dy] = find(p2d<0.1);
+    pkj = intersect(pk1dx, pk2dx);
+    t5v32(pkj) = [];
+    t6v32(pkj) = [];
+    intm1 = sortrows(intm);
+    t5v32 = intm1(:,1);
+    t6v32 = intm1(:,2);
+    p1d = diff(t5v32);
+    [pk1dx pk1dy] = find(p1d<0.1);
+    p2d = abs(diff(t6v32));
+    [pk2dx pk2dy] = find(p2d<0.1);
+    pkj = intersect(pk1dx, pk2dx);
+    t5v32(pkj) = [];
+    t6v32(pkj) = [];
+    clear p1d pk1dx pk1dy p2d pk2dx pk2dy pkj intm intm1
+    p1d = diff(t5v32);
+    [pk1dx pk1dy] = find(p1d<0.1);
+    p2d = abs(diff(t6v32));
+    [pk2dx pk2dy] = find(p2d<0.1);
+    pkj = intersect(pk1dx, pk2dx);
+    t5v32(pkj+1) = [];
+    t6v32(pkj+1) = [];
+    clear p1d pk1dx pk1dy p2d pk2dx pk2dy pkj intm intm1 nm k1ix k1iy k2ix k2iy idx1 idx2
+    
+    lt5 = size(t5v32,1);
+    t5v3(end+1:end+lt5) = t5v32;
+    t6v3(end+1:end+lt5) = t6v32;
+
+    
+     sloc1(1,:) = t5v3;
+     sloc1(2,:) = t6v3;
+     peek1 = size(sloc1,2);
+     sloc1(3,1) = fi;
+     sloc1(3,2) = peek1;
+     sloc1(3,3) = peek;
+     sloc1(4,1:peek) = transpose(loc(2:end,1));
+     sloc1(5,1:peek) = transpose(loc(2:end,2));
+     fid=fopen([~_ftle_saddle_',sprintf('%7.7d',100*(fi)),'.dat'],'w');
+     fwrite(fid,sloc1,'single');
+     fclose(fid);
+
