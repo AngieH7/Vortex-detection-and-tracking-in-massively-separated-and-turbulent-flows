@@ -1,0 +1,588 @@
+---------------------------------------------------------------------
+--Copyright (c) 2012 Intelligent Light                        --
+--  All rights reserved.                                        --
+--                                                              --
+-- This sample FVX script is not supported by Intelligent Light --
+-- and Intelligent Light provides no warranties or assurances   --
+-- about its fitness or merchantability.  It is provided at no  --
+-- cost and is for demonstration purposes only.                 --
+--
+-- Purpose: recreate a set of several visualizations, once for  --
+--    each of new data, provided in a list (table)              --
+--------------------------------------------------------------------
+
+imgformat = "png"
+numstart = 345--850--
+numend = 750--850--650--185--485--850--320--650--
+numskip = 5
+no = 185
+numstartind = 850
+numendind = 650
+
+velocity_path = "c:/Users/Angie/Documents/data-vortex center/Eldrege/Press gradient/"
+output_path = "e:/"
+ftle_path = "c:/Users/Angie/Documents/data-vortex center/FP/Data_45/data_05272014/"
+f_path = "c:/Users/Angie/Documents/data-vortex center/Eldrege/"
+d_path = "c:/Users/Angie/Documents/data-vortex center/Eldrege/Vor/"
+e_path = "c:/Users/Angie/Documents/data-vortex center/Eldrege/Vor2/"
+vorticity_path = "c:/Users/Angie/Documents/data-vortex center/Eldrege/vorticity/"
+saddle_path = "c:/Users/Angie/Documents/data-vortex center/Eldrege/Saddle/"
+saddle2_path = "c:/Users/Angie/Documents/data-vortex center/Eldrege/Saddle2/"
+panel_path = "c:/Users/Angie/Documents/data-vortex center/FP/Data_45/data_05272014/"
+restart_path = "c:/Users/Angie/Documents/data-vortex center/Eldrege/TEMP/"
+cor_path = "C:/Users/Angie/Documents/thesis_code/Fortran/vel/"
+
+picname ="fp45_lavd_par_vor_q"
+restartfname ="fp45_lcs_ms_vor"
+
+
+data_input_table1 = {
+  data_format = 'overflow-2',
+  input_parameters = {
+    xyz_file = {
+     name = d_path.."grid.dat",
+      options = {
+        format = "unformatted",
+        input_mode = "replace",
+        coords = "2d",
+        multi_grid = "off",
+        iblanks = "off"
+      } -- options
+    },--xyz file
+    function_file = {
+      name = "",
+      names_filename = "",
+      options = {
+        format = "unformatted",
+        input_mode = "replace",
+        coords = "2d",
+        multi_grid = "off",
+        iblanks = "off"
+      } -- options
+    },--function_file
+  }--input parameters
+}-- data_input_table1
+
+data_input_table2 = {
+  data_format = 'overflow-2',
+  input_parameters = {
+    xyz_file = {
+     name = d_path.."grid.dat",
+      options = {
+        format = "unformatted",
+        input_mode = "append",
+        coords = "2d",
+        multi_grid = "off",
+        iblanks = "off"
+      } -- options
+    },--xyz file
+    function_file = {
+      name = "",
+      names_filename = "",
+      options = {
+        format = "unformatted",
+        input_mode = "append",
+        coords = "2d",
+        multi_grid = "off",
+        iblanks = "off"
+      } -- options
+    },--function_file
+  }--input parameters
+}-- data_input_table2
+
+data_input_table3 = {
+ data_format = 'overflow-2',
+   input_parameters = {
+   xyz_file = {
+        name = d_path.."grid.dat",
+        options = {
+                format = "unformatted",
+                input_mode = "append",
+                coords = "2d",
+                multi_grid = "off",
+                iblanks = "off"
+            } -- options
+       },--xyz file
+       function_file = {
+           name = nil,  -- we'll provide the data in our loop
+            names_filename = "",
+            options = {
+                format = "unformatted",
+                input_mode = "append",
+                coords = "2d",
+                multi_grid = "off",
+                iblanks = "off"
+            } -- options
+	   },--function_file
+   }--input parameters
+}-- data_input_table3
+
+data_input_table4 = {
+ data_format = 'overflow-2',
+   input_parameters = {
+   xyz_file = {
+        name = d_path.."grid.dat",
+        options = {
+                format = "unformatted",
+                input_mode = "append",
+                coords = "2d",
+                multi_grid = "off",
+                iblanks = "off"
+            } -- options
+       },--xyz file
+       function_file = {
+           name = nil,  -- we'll provide the data in our loop
+            names_filename = "",
+            options = {
+                format = "unformatted",
+                input_mode = "append",
+                coords = "2d",
+                multi_grid = "off",
+                iblanks = "off"
+            } -- options
+	   },--function_file
+   }--input parameters
+}-- data_input_table4
+data_input_table5 = {
+  data_format = 'plot3d',
+  input_parameters = {
+    xyz_file = {
+      name = nil,
+      options = {
+        format = "unformatted",
+        input_mode = "append",
+        coords = "3d",
+        multi_grid = "off",
+        iblanks = "off"
+      } -- options
+    },--xyz file
+    function_file = {
+      name = "",
+      names_filename = "",
+      options = {
+        format = "unformatted",
+        input_mode = "append",
+        coords = "3d",
+        multi_grid = "off",
+        iblanks = "off"
+      } -- options
+    },--function_file
+  }--input parameters
+}-- data_input_table5
+data_input_table6 = {
+ data_format = 'overflow-2',
+   input_parameters = {
+   xyz_file = {
+        name = d_path.."grid.dat",
+        options = {
+                format = "unformatted",
+                input_mode = "append",
+                coords = "2d",
+                multi_grid = "off",
+                iblanks = "off"
+            } -- options
+       },--xyz file
+       function_file = {
+           name = nil,  -- we'll provide the data in our loop
+            names_filename = "",
+            options = {
+                format = "unformatted",
+                input_mode = "append",
+                coords = "2d",
+                multi_grid = "off",
+                iblanks = "off"
+            } -- options
+	   },--function_file
+   }--input parameters
+}-- data_input_table6
+data_input_table7 = {
+ data_format = 'overflow-2',
+   input_parameters = {
+   xyz_file = {
+        name = d_path.."grid.dat",
+        options = {
+                format = "unformatted",
+                input_mode = "append",
+                coords = "2d",
+                multi_grid = "off",
+                iblanks = "off"
+            } -- options
+       },--xyz file
+       function_file = {
+           name = nil,  -- we'll provide the data in our loop
+            names_filename = "",
+            options = {
+                format = "unformatted",
+                input_mode = "append",
+                coords = "2d",
+                multi_grid = "off",
+                iblanks = "off"
+            } -- options
+	   },--function_file
+   }--input parameters
+}-- data_input_table7
+data_input_table8 = {
+ data_format = 'overflow-2',
+   input_parameters = {
+   xyz_file = {
+        name = d_path.."grid.dat",
+        options = {
+                format = "unformatted",
+                input_mode = "append",
+                coords = "2d",
+                multi_grid = "off",
+                iblanks = "off"
+            } -- options
+       },--xyz file
+       function_file = {
+           name = nil,  -- we'll provide the data in our loop
+            names_filename = "",
+            options = {
+                format = "unformatted",
+                input_mode = "append",
+                coords = "2d",
+                multi_grid = "off",
+                iblanks = "off"
+            } -- options
+	   },--function_file
+   }--input parameters
+}-- data_input_table8
+data_input_table9 = {
+ data_format = 'overflow-2',
+   input_parameters = {
+   xyz_file = {
+        name = d_path.."grid.dat",
+        options = {
+                format = "unformatted",
+                input_mode = "append",
+                coords = "2d",
+                multi_grid = "off",
+                iblanks = "off"
+            } -- options
+       },--xyz file
+       function_file = {
+           name = nil,  -- we'll provide the data in our loop
+            names_filename = "",
+            options = {
+                format = "unformatted",
+                input_mode = "append",
+                coords = "2d",
+                multi_grid = "off",
+                iblanks = "off"
+            } -- options
+	   },--function_file
+   }--input parameters
+}-- data_input_table9
+
+data_input_table10 = {
+ data_format = 'overflow-2',
+   input_parameters = {
+   xyz_file = {
+        name = d_path.."grid.dat",
+        options = {
+                format = "unformatted",
+                input_mode = "append",
+                coords = "2d",
+                multi_grid = "off",
+                iblanks = "off"
+            } -- options
+       },--xyz file
+       function_file = {
+           name = nil,  -- we'll provide the data in our loop
+            names_filename = "",
+            options = {
+                format = "unformatted",
+                input_mode = "append",
+                coords = "2d",
+                multi_grid = "off",
+                iblanks = "off"
+            } -- options
+	   },--function_file
+   }--input parameters
+}-- data_input_table10
+
+my_ppath_panel = ({
+dataset = 7,
+visibility = "on",
+--geometric_color = 5,--'black',
+format = "fvp",
+filename = nil,
+line_type = "thick"
+})
+
+my_ppath_area = ({
+ dataset = 5,
+visibility = "on",
+--geometric_color = 7,
+format = "fvp",
+filename = nil,
+line_type = "thick",
+scalar_func ='F2',
+scalar_colormap = {
+    name = "ccm blue red",
+  },
+scalar_range = {
+min = -20,--100,
+max = 20,--15,
+},
+show_legend = "on",
+legend = {
+            type = "spectrum",
+            scale_height = 2.112393856048584,
+            spectrum = {
+                border = "off",
+                colorbar = "on",
+                horizontal = "no",
+                num_labels = 3,
+            }, -- spectrum
+            annotation = "on",
+            annotation_parameters = {
+                position = "top",
+                subtitle = {
+                    size = 8,
+                    color = "black",
+                    text = "",
+                    font = "leese",
+                }, -- subtitle
+                title = {
+                    size = 10,
+                    color = "black",
+                    text = "",
+                    font = "leese",
+                }, -- title
+            }, -- annotation_parameters
+            frame = "on",
+            labels_parameters = {
+                size = 16,
+                coloring = "black",
+                decimal_places = 0,
+                numerical_format = "floating_point",
+                font = "lee",
+            }, -- labels_parameters
+            relative_position = {
+                1.834000468254089,
+                -0.2220000624656677,
+            }, -- relative_position
+            background = "on",
+            scale_width = 2.855015277862549,
+            labels = "on",
+        } -- legend
+})
+
+my_ppath_area_tev = ({
+ dataset = 6,
+visibility = "on",
+--geometric_color = 7,
+format = "fvp",
+filename = nil,
+line_type = "thick",
+scalar_func ='F2',
+scalar_colormap = {
+    name = "ccm blue red",
+  },
+scalar_range = {
+min = -20,--100,
+max = 20,--15,
+}
+})
+
+my_ppath_lavdc = ({
+dataset = 1,
+visibility = "on",
+geometric_color = 'black',--3,
+format = "fvp",
+filename = nil,
+line_type = "thick"
+})
+
+my_ppath_lavdc_tev = ({
+dataset = 2,
+visibility = "on",
+geometric_color = 'black',--3,
+format = "fvp",
+filename = nil,
+line_type = "thick"
+})
+
+my_ppath_g1c = ({
+dataset = 3,
+visibility = "on",
+geometric_color = 3,
+format = "fvp",
+filename = nil,
+line_type = "thin"
+})
+
+my_ppath_g1c1 = ({
+dataset = 4,
+visibility = "on",
+geometric_color = 3,
+format = "fvp",
+filename = nil,
+line_type = "thin"
+})
+
+fv_script("size 1000 500")
+
+for j = numstart,numend,numskip do
+
+ data_input_table1.input_parameters.xyz_file.name = velocity_path.."grid.dat" 
+ read_dataset(data_input_table1)
+  data_input_table2.input_parameters.xyz_file.name = velocity_path.."grid.dat" 
+ read_dataset(data_input_table2)
+ data_input_table3.input_parameters.xyz_file.name = velocity_path.."grid.dat" 
+  read_dataset(data_input_table3)
+ data_input_table10.input_parameters.xyz_file.name = velocity_path.."grid.dat" 
+  read_dataset(data_input_table10)
+  data_input_table6.input_parameters.function_file.name = d_path.."pitchup_eul_zrat_"..format("%04d",j).."00.dat"
+  print("\nReading:"..data_input_table6.input_parameters.function_file.name)
+  read_dataset(data_input_table6)
+data_input_table7.input_parameters.function_file.name = d_path.."pitchup_eul_zrat_"..format("%04d",j).."00.dat"
+  print("\nReading:"..data_input_table7.input_parameters.function_file.name)
+  read_dataset(data_input_table7)
+  read_dataset(data_input_table8)
+data_input_table9.input_parameters.function_file.name = d_path.."pitchup_eul_zrat_"..format("%04d",j).."00.dat"
+  print("\nReading:"..data_input_table9.input_parameters.function_file.name)
+  read_dataset(data_input_table9)
+ data_input_table5.input_parameters.xyz_file.name = cor_path.."grid.dat"
+ read_dataset(data_input_table5)
+
+--------------------------------------------------------------------------------
+--            VIEWING PARAMETERS
+--------------------------------------------------------------------------------
+fv_script("RESTART VIEW C:/Users/Angie/Documents/data-vortex center/Eldrege/TEMP/fp45_lcs_ms_vor.vct")
+
+--------------------------------------------------------------------------------
+--            COLORMAP
+--------------------------------------------------------------------------------
+fv_script("RESTART COLOR C:/Users/Angie/Documents/data-vortex center/Eldrege/TEMP/fp45_lcs_ms_vor.map")
+
+--------------------------------------------------------------------------------
+--            PRESENTATION RENDERING
+--------------------------------------------------------------------------------
+fv_script("RESTART PRESENTATION C:/Users/Angie/Documents/data-vortex center/Eldrege/TEMP/fp45_lcs_ms_vor.prd")
+
+  C2 = create_comp({
+  dataset = 8,
+  grid = 1,
+  axis = "K",
+  geometric_color = 1,
+  show_legend = "off",
+  display_type = "constant_shading",
+  threshold_func = "F1",
+            I_inc = 1,
+        J_inc = 1,
+        vector_func = "none",
+        line_type = "thin",
+        threshold_range = {
+            abs_max = 3329.0439453125,
+            max = 3329.0439453125,
+            abs_min = -446.3232727050781,
+            min = 0,
+        }, -- threshold_range
+  })
+t=940-j
+t1 = 850-j
+geom_colors = query_colortable()
+geom_colors[3] = {red = 255, green = 169, blue = 0, name = "dgreen"}
+set_colortable(geom_colors)
+geom_colors = query_colortable()
+geom_colors[7] = {red = 207, green = 184, blue = 233, name = "dgreen"}
+set_colortable(geom_colors)
+
+   my_ppath_lavdc.filename = d_path.."lavdcenter_0085000_"..format("%06d",t1)..".fvp" 
+   read_particle_paths(my_ppath_lavdc)
+
+my_ppath_lavdc_tev.filename = e_path.."lavdcenter_0094000_"..format("%06d",t)..".fvp" 
+   read_particle_paths(my_ppath_lavdc_tev)
+    
+ my_ppath_area.filename = d_path.."area_matrix_"..format("%04d",850).."00_"..format("%03d",650).."_"..format("%06d",j)..".fvp"
+    read_particle_paths(my_ppath_area)
+
+ my_ppath_area_tev.filename = e_path.."area_matrix_"..format("%04d",940).."00_"..format("%03d",740).."_"..format("%06d",j)..".fvp"
+    read_particle_paths(my_ppath_area_tev)
+
+   my_ppath_panel.filename = panel_path.."panel_2_00"..format("%03d",j).."00.fvp"
+   print("\nReading: "..my_ppath_panel.filename)
+   read_particle_paths(my_ppath_panel)
+
+    my_ppath_g1c.filename = d_path.."fp45_g1center_ud1_"..format("%03d",j)..".fvp"
+    print("\nReading: "..my_ppath_g1c.filename)
+    read_particle_paths(my_ppath_g1c)
+
+  if j>340 and j<755 then
+    my_ppath_g1c1.filename = e_path.."fp45_tev_g1center_ud1_"..format("%06d",j*10)..".fvp"
+    print("\nReading: "..my_ppath_g1c1.filename)
+    read_particle_paths(my_ppath_g1c1)
+    end
+
+   set_particle_paths_display({
+   display_type ="dots",
+   sphere_scale = 2
+   })
+
+ C2 = create_coord({
+        dataset = 9,
+  transparency = 1,
+        ruled_grid_options = {
+            horizontal_axis = {
+                labels_parameters = {
+                    decimal_places = 1,
+                    numerical_format = "floating_point",
+                }, -- labels_parameters
+                tick_marks = "on",
+                labels = "off",
+                grid_lines = "off",
+                label = "X",
+                interval = 0.5,
+            }, -- horizontal_axis
+            size = 10,
+            vertical_axis = {
+                labels_parameters = {
+                    decimal_places = 1,
+                    numerical_format = "floating_point",
+                }, -- labels_parameters
+                tick_marks = "on",
+                labels = "off",
+                grid_lines = "off",
+                label = "Y",
+                interval = 0.5,
+            }, -- vertical_axis
+            color = "black",
+            font = "leese",
+        }, -- ruled_grid_options
+        show_legend = "off",
+        number_of_contours = 16,
+        Z_axis = {
+            abs_max = 9.999999747378752e-005,
+            current = 4.999999873689376e-005,
+            max = 9.999999747378752e-005,
+            abs_min = 0,
+            min = 0,
+        }, -- Z_axis
+        Y_axis = {
+            abs_max = 1,
+            max = 1,
+            abs_min = -2,
+            min = -2,
+        }, -- Y_axis
+        geometric_color = 5,
+        display_type = "constant_shading",
+        contours = "none",
+        line_type = "thin",
+        axis = "Z",
+        show_mesh = "off",
+        threshold_func = "none",
+        visibility = "on",
+        scalar_func = "none",
+        vector_func = "none",
+        ruled_grid = "on",
+        X_axis = {
+            abs_max = 5.5,
+            max = 5.5,
+            abs_min = -0.5,
+            min = -0.5,
+        }, 
+})
+ fv_script("print graphics "..imgformat.." "..output_path..picname.."_"..format("%03d", j))
+ end
